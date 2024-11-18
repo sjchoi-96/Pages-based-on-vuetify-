@@ -127,20 +127,19 @@ export default defineComponent({
   },
 });
 </script>
-
 <style scoped>
 .center-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh; /* 세로 중앙 정렬을 위해 뷰포트 전체 높이 */
+  min-height: 100vh;
 }
 
 .custom-design-textfield {
-  width: 500px; /* 원하는 가로 크기 설정 */
+  margin-bottom: 20px; /* 상하 간격 조정 */
+  width: 500px;
 }
 
-/* 스낵바 내용을 중앙 정렬 */
 .custom-snackbar .snackbar-content {
   display: flex;
   justify-content: center;

@@ -23,7 +23,7 @@ import { defineComponent, ref } from "vue";
 import ImageUpload from "./ImageUpload.vue";
 
 export default defineComponent({
-  name: "panoramicAndAxialViewer",
+  name: "PanoramicAndAxialViewer",
   components: { ImageUpload },
 
   setup(props, { emit }) {
@@ -66,37 +66,48 @@ export default defineComponent({
 </script>
 
 <style scoped>
+/* 컨테이너를 Grid로 정의 */
 .viewer-container {
-  gap: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2열 구성 */
+  grid-template-rows: 1fr 1fr; /* 2행 구성, 행 비율 조정 */
+  gap: 20px; /* 각 요소 간 간격 */
+  width: 100%; /* 전체 너비 */
+  height: calc(100vh - 100px); /* 전체 화면 높이에서 버튼 영역 제외 */
+  padding: 20px;
+  box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
-/* 각 ImageUpload 컴포넌트의 크기 및 위치를 조정 */
-.upload-panoramic {
-  position: absolute;
-  top: 100px;
-  right: 50px;
-  width: 500px;
-  height: 500px;
-  border: 2px solid #0077ff;
-  margin-bottom: 20px;
-}
-
-.upload-axial {
-  position: absolute;
-  top: 700px; /* 원하는 위치 조정 */
-  right: 50px;
-  width: 500px;
-  height: 500px;
-  border: 2px solid #ff7700;
-  margin-bottom: 20px;
-}
-
+/* Arch Curve in UI: 1행~2행 1열 */
 .upload-arch-curve-in-UI {
-  position: absolute;
-  top: 100px;
-  left: 50px;
-  width: 1500px;
-  height: 1000px;
+  grid-row: 1 / 3; /* 2행까지 차지 */
+  grid-column: 1; /* 1열 */
+  width: 100%; /* 가로 길이 조정 */
+  height: 90%; /* 높이를 조정하여 버튼 영역 확보 */
   border: 2px solid #00ff77;
+  border-radius: 8px; /* 둥근 모서리 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+}
+
+/* Panoramic: 1행 2열 */
+.upload-panoramic {
+  grid-column: 2; /* 2열 */
+  grid-row: 1; /* 1행 */
+  width: 100%; /* 가로 길이 자동 조정 */
+  height: 90%; /* 높이를 조정하여 버튼 영역 확보 */
+  border: 2px solid #0077ff;
+  border-radius: 8px; /* 둥근 모서리 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+}
+
+/* Axial: 2행 2열 */
+.upload-axial {
+  grid-column: 2; /* 2열 */
+  grid-row: 2; /* 2행 */
+  width: 100%; /* 가로 길이 자동 조정 */
+  height: 90%; /* 높이를 조정하여 버튼 영역 확보 */
+  border: 2px solid #ff7700;
+  border-radius: 8px; /* 둥근 모서리 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
 }
 </style>

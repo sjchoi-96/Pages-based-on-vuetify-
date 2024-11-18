@@ -1,218 +1,209 @@
 <template>
   <v-app>
-    <!-- 최상단 툴바에 컴포넌트 목록을 표시 -->
-    <v-app-bar app color="primary" dark>
-      <div class="main-content">
-        <v-chip
-          v-for="(title, index) in stepTitles"
-          :key="index"
-          :color="index + 1 === activeStep ? 'white' : 'grey lighten-2'"
-          :text-color="index + 1 === activeStep ? 'primary' : 'grey darken-1'"
-          outlined
-          class="step-chip"
-        >
-          <strong v-if="index + 1 === activeStep">{{ title }}</strong>
-          <span v-else>{{ title }}</span>
-        </v-chip>
-      </div>
-    </v-app-bar>
+    <v-container>
+      <!-- Stepper Header -->
+      <v-stepper v-model="currentStep" flat>
+        <v-stepper-header class="stepper-header">
+          <v-stepper-step
+            v-for="(step, index) in steps"
+            :key="index"
+            :step="index + 1"
+            :complete="currentStep > index + 1"
+            :color="currentStep === index + 1 ? 'primary' : ''"
+            class="step-header"
+            :class="{
+              'active-step': currentStep === index + 1,
+              'clickable-step': true,
+            }"
+            @click="goToStep(index + 1)"
+          >
+            {{ step }}
+          </v-stepper-step>
+        </v-stepper-header>
 
-    <v-container fluid class="main-container">
-      <!-- 현재 진행 중인 단계만 렌더링 -->
-      <div class="step-box">
-        <h3 :style="{ color: 'black' }">{{ stepTitles[activeStep - 1] }}</h3>
-        <!-- keep-alive를 사용하여 이전 단계의 컴포넌트 데이터를 남겨놓음 -->
-        <keep-alive>
-          <component
-            :is="getStepComponent(activeStep)"
-            @completed="handleStepEvent"
-          />
-        </keep-alive>
-      </div>
+        <!-- Grid Layout for Components -->
+        <div class="grid-container">
+          <div
+            v-for="(step, index) in steps"
+            :key="index"
+            class="grid-item"
+            :class="{ visible: currentStep >= index + 1 }"
+          >
+            <keep-alive>
+              <component :is="getStepComponent(index + 1)" />
+            </keep-alive>
+          </div>
+        </div>
+      </v-stepper>
 
-      <!-- 네비게이션 버튼 -->
-      <div class="step-navigation-buttons">
+      <!-- Navigation Buttons -->
+      <v-card-actions class="step-buttons">
         <v-btn
+          outlined
           color="secondary"
           @click="prevStep"
-          v-if="activeStep > 1"
-          outlined
+          v-if="currentStep > 1"
+          class="navigation-btn"
         >
-          이전 단계
+          Previous
         </v-btn>
         <v-btn
+          outlined
           color="primary"
           @click="nextStep"
-          :disabled="!canProceed && activeStep < totalSteps"
-          outlined
+          v-if="currentStep < steps.length"
+          class="navigation-btn"
         >
-          다음 단계
+          Next
         </v-btn>
-      </div>
+        <v-btn
+          color="success"
+          @click="finishStepper"
+          v-if="currentStep === steps.length"
+          class="navigation-btn"
+        >
+          Finish
+        </v-btn>
+      </v-card-actions>
     </v-container>
   </v-app>
 </template>
 
 <script lang="ts">
-import { ref, Ref } from "vue";
-import PatientInfoForm from "./components/PatientInfoForm.vue"; // PatientInfoForm 컴포넌트 가져오기
-import PanoramicAndAxialViewer from "./components/panoramicAndAxialViewer.vue"; // ImageUpload 컴포넌트 가져오기
+import { ref } from "vue";
+import PatientInfoForm from "./components/PatientInfoForm.vue";
+import PanoramicAndAxialViewer from "./components/PanoramicAndAxialViewer.vue";
 import ThreeDimViewer from "./components/ThreeDimViewer.vue";
 
 export default {
-  name: "App",
-  components: {
-    PatientInfoForm,
-    PanoramicAndAxialViewer,
-    ThreeDimViewer,
-  },
+  name: "DynamicGridStepper",
   setup() {
-    // 반응형 변수 정의
-    const totalSteps: number = 3;
-    const activeStep: Ref<number> = ref(1);
-    const completedSteps: Ref<number[]> = ref([]);
-    const patientName: Ref<string> = ref("");
-    const birthDate: Ref<string> = ref("");
-    const patientId: Ref<string> = ref("");
-    const patientImage: Ref<File | null> = ref(null);
-    const threeDimModel: Ref<File | null> = ref(null);
-    const isPatientInfoComplete: Ref<boolean> = ref(false);
-    const canProceed: Ref<boolean> = ref(false);
-    const stepTitles: string[] = [
-      "환자 정보 입력",
-      "이미지 뷰어",
-      "3D 모델 뷰어",
-    ];
+    const steps = ["Patient Info", "Image Viewer", "3D Viewer"];
+    const currentStep = ref(1);
 
-    // 현재 단계를 완료했을 때 실행되는 함수
-    const handleStepCompleted = () => {
-      canProceed.value = true;
-    };
-
-    // 다음 단계로 이동하는 함수
     const nextStep = () => {
-      if (activeStep.value <= totalSteps) {
-        completedSteps.value.push(activeStep.value);
-        activeStep.value++;
-        canProceed.value = false;
-      }
+      if (currentStep.value < steps.length) currentStep.value++;
     };
 
-    // 이전 단계로 이동하는 함수
     const prevStep = () => {
-      if (activeStep.value > 1) {
-        completedSteps.value.pop();
-        activeStep.value--;
-        canProceed.value = true;
-      }
+      if (currentStep.value > 1) currentStep.value--;
     };
 
-    interface PatientInfo {
-      name: string;
-      birthDate: string;
-      id: string;
-    }
+    const finishStepper = () => {
+      alert("All steps completed!");
+    };
 
-    // 이벤트 핸들러
-    const handleStepEvent = (eventData: PatientInfo | File) => {
-      console.log("handleStepEvent 호출됨, 데이터:", eventData);
-
-      if (activeStep.value === 1) {
-        if (
-          typeof eventData === "object" &&
-          "name" in eventData &&
-          "birthDate" in eventData &&
-          "id" in eventData
-        ) {
-          const patientInfo = eventData as PatientInfo;
-          patientName.value = patientInfo.name;
-          birthDate.value = patientInfo.birthDate;
-          patientId.value = patientInfo.id;
-          isPatientInfoComplete.value = true;
-          console.log("환자 정보 입력 단계 완료");
-        } else {
-          console.error("Invalid eventData format for patient info");
-        }
-      } else if (activeStep.value === 2) {
-        if (eventData instanceof File) {
-          patientImage.value = eventData;
-          console.log("이미지 뷰어 단계 완료");
-        } else {
-          console.error("Invalid eventData format for image file");
-        }
-      } else if (activeStep.value === 3) {
-        if (eventData instanceof File) {
-          threeDimModel.value = eventData;
-          console.log("3D 모델 뷰어 단계 완료");
-        } else {
-          console.error("Invalid eventData format for 3D model file");
-        }
+    const goToStep = (step: number) => {
+      if (step >= 1 && step <= steps.length) {
+        currentStep.value = step;
       }
-      handleStepCompleted();
     };
 
     const getStepComponent = (step: number) => {
-      if (step === 1) {
-        console.log("PatientInfoForm 호출 요청");
-        return PatientInfoForm;
+      switch (step) {
+        case 1:
+          return PatientInfoForm;
+        case 2:
+          return PanoramicAndAxialViewer;
+        case 3:
+          return ThreeDimViewer;
+        default:
+          return null;
       }
-      if (step === 2) {
-        console.log("PanoramicAndAxialViewer 호출 요청");
-        return PanoramicAndAxialViewer;
-      }
-      if (step === 3) {
-        console.log("ThreeDimViewer 호출 요청");
-        return ThreeDimViewer;
-      }
-      return null;
     };
 
     return {
-      activeStep,
-      totalSteps,
-      completedSteps,
-      patientName,
-      birthDate,
-      patientImage,
-      isPatientInfoComplete,
-      canProceed,
-      stepTitles,
+      steps,
+      currentStep,
       nextStep,
       prevStep,
+      finishStepper,
+      goToStep,
       getStepComponent,
-      handleStepEvent,
     };
   },
 };
 </script>
 
 <style>
-/* 전역 스타일 */
 .v-application__wrap {
   overflow: hidden; /* 스크롤바 숨기기 */
   height: 100vh; /* 전체 뷰포트 높이 설정 */
   display: flex;
   flex-direction: column;
-  background-color: #f5f5f5e1; /* 배경색 설정 */
+}
+/* Step Header: 크기 고정 및 정렬 */
+.stepper-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 8px; /* 라운드 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 */
 }
 
-.v-app-bar {
-  flex-shrink: 0; /* v-app-bar가 축소되지 않도록 설정 */
+/* 스텝 헤더 */
+.step-header {
+  font-size: 30px; /* 기본 글씨 크기 */
+  width: 200px; /* 고정된 너비 */
+  height: 50px; /* 고정된 높이 */
+  /*글씨 크기가 변하더라도 레이아웃이 바뀌지 않도록 보장*/
+  line-height: 50px; /* 텍스트를 세로 중앙 정렬 */
+  text-align: center; /* 텍스트를 항상 중앙에 정렬 */
+  transition: color 0.3s ease, transform 0.3s ease; /* 부드러운 색상 및 효과 전환 */
 }
 
-.main-content {
-  flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
-  overflow-y: auto; /* 세로 스크롤 가능하도록 설정 */
+/* 활성화된 스텝 */
+.active-step {
+  color: #1976d2; /* 활성화된 텍스트 색상 */
+  transform: scale(1.1); /* 글씨 크기를 확대하는 대신 transform 사용 */
 }
 
+/* Card Actions: 위치 통일 */
+.step-buttons {
+  display: flex;
+  justify-content: flex-start; /* 버튼을 왼쪽 정렬 */
+  gap: 16px; /* 버튼 간 간격 */
+  position: fixed; /* 버튼을 항상 고정 */
+  bottom: 16px; /* 화면 하단에 고정 */
+  left: 16px; /* 화면 왼쪽에서 여백 추가 */
+  width: fit-content; /* 버튼 그룹의 너비를 내용에 맞게 설정 */
+  padding: 8px; /* 내부 여백 설정 */
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* 상단 그림자 */
+  z-index: 200; /* 다른 요소보다 위에 표시 */
+  border-radius: 8px; /* 모서리를 살짝 둥글게 설정 */
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3열 레이아웃 */
+  gap: 16px; /* 각 컴포넌트 간 간격 */
+  margin-top: 16px;
+}
+
+.grid-item {
+  border: 1px solid #ddd; /* 컴포넌트 테두리 */
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.grid-item.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 네비게이션 버튼 */
 .step-navigation-buttons {
-  flex-shrink: 0; /* 축소되지 않도록 설정 */
-  position: fixed; /* 화면에 고정 */
-  bottom: 0; /* 화면의 아래쪽에 위치 */
-  width: 100%; /* 전체 너비 차지 */
-  display: flex; /* 플렉스 박스 사용 */
-  justify-content: center; /* 중앙 정렬 */
-  align-items: center; /* 수직 중앙 정렬 */
-  z-index: 1000; /* 다른 요소들 위에 표시되도록 설정 */
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 16px;
 }
 </style>

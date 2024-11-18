@@ -10,7 +10,7 @@ declare module 'vue' {
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     ImageUpload: typeof import('./src/components/ImageUpload.vue')['default']
     ImageUploader: typeof import('./src/components/ImageUploader.vue')['default']
-    PanoramicAndAxialViewer: typeof import('./src/components/panoramicAndAxialViewer.vue')['default']
+    PanoramicAndAxialViewer: typeof import('./src/components/PanoramicAndAxialViewer.vue')['default']
     PatientInfoForm: typeof import('./src/components/PatientInfoForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
