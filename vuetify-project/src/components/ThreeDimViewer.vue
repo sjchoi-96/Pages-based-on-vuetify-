@@ -1,24 +1,27 @@
 <template>
   <v-container>
     <div class="threeD-file-upload-container">
-      <input
-        type="file"
-        ref="fileInput"
-        @change="handleFileUpload"
-        accept=".stl,.obj"
-        style="display: none"
-      />
-      <v-btn color="primary" @click="triggerFileUpload">파일 선택</v-btn>
-    </div>
-    <div v-if="fileName" class="file-info">
-      <p>선택된 파일: {{ fileName }}</p>
+      <!-- 파일 선택 버튼과 파일 정보 컨테이너 -->
+      <div class="controls-container">
+        <v-btn class="custom-btn" @click="triggerFileUpload"> 파일 선택 </v-btn>
+        <input
+          type="file"
+          ref="fileInput"
+          @change="handleFileUpload"
+          accept=".stl,.obj"
+          style="display: none"
+        />
+        <div v-if="fileName" class="file-info">
+          <p>{{ fileName }}</p>
+        </div>
+      </div>
     </div>
     <div id="viewer" ref="viewer" class="viewer-container"></div>
   </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, onBeforeUnmount } from "vue";
 import * as THREE from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
@@ -68,7 +71,7 @@ export default defineComponent({
             1000
           );
 
-          renderer = new THREE.WebGLRenderer();
+          renderer = new THREE.WebGLRenderer({ antialias: true });
           renderer.setSize(viewer.value.clientWidth, viewer.value.clientHeight);
           viewer.value.innerHTML = "";
           viewer.value.appendChild(renderer.domElement);
@@ -126,14 +129,12 @@ export default defineComponent({
     };
 
     const resizeViewer = () => {
-      if (viewer.value) {
+      if (viewer.value && renderer) {
         const width = viewer.value.clientWidth;
         const height = viewer.value.clientHeight;
-        const renderer = viewer.value.querySelector("canvas");
-        if (renderer) {
-          renderer.width = width;
-          renderer.height = height;
-        }
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
       }
     };
 
@@ -144,6 +145,10 @@ export default defineComponent({
         window.addEventListener("resize", resizeViewer);
         resizeViewer();
       }
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener("resize", resizeViewer);
     });
 
     return {
@@ -162,5 +167,38 @@ export default defineComponent({
   width: 100%;
   height: 800px;
   border: 1px solid #ccc;
+  background-color: rgba(0, 0, 0, 1);
+  position: relative; /* 내부 요소의 절대 배치를 위한 기준 */
+}
+
+/* 파일 선택 버튼 및 파일 정보 컨테이너 */
+.controls-container {
+  position: absolute; /* 부모의 상대적 위치에 따라 배치 */
+  bottom: 150px; /* viewer-container의 하단에서 16px 띄움 */
+  display: flex; /* 버튼과 파일 정보를 가로로 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  gap: 10px; /* 버튼과 파일 정보 간격 */
+}
+
+/* 파일 선택 버튼 */
+.custom-btn {
+  display: flex; /* 내부 콘텐츠를 정렬하기 위해 flexbox 사용 */
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  background-color: #1968cf; /* 배경색 */
+  color: white; /* 텍스트 색상 */
+  padding: 12px 30px; /* 버튼 내부 여백 */
+  font-size: 18px; /* 텍스트 크기 */
+  border-radius: 8px; /* 둥근 모서리 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  text-align: center; /* 텍스트 정렬 */
+}
+
+/* 파일 정보 */
+.file-info {
+  font-size: 16px;
+  color: white;
+  padding: 8px;
+  border-radius: 4px;
 }
 </style>

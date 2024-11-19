@@ -125,10 +125,10 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .v-application__wrap {
   overflow: hidden; /* 스크롤바 숨기기 */
-  height: 100vh; /* 전체 뷰포트 높이 설정 */
+  height: 300px; /* 전체 뷰포트 높이 설정 */
   display: flex;
   flex-direction: column;
 }
@@ -140,8 +140,9 @@ export default {
   padding: 16px;
   display: flex;
   justify-content: space-between;
-  border-radius: 8px; /* 라운드 */
+  border-radius: 10px; /* 라운드 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 */
+  background-color: #f5f5f5c4;
 }
 
 /* 스텝 헤더 */
@@ -187,16 +188,16 @@ export default {
   border: 1px solid #ddd; /* 컴포넌트 테두리 */
   padding: 16px;
   border-radius: 8px;
-  background-color: #f5f5f5;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   opacity: 0;
   transform: scale(0.95);
   transition: opacity 0.3s ease, transform 0.3s ease;
+  height: 85vh;
 }
 
 .grid-item.visible {
   opacity: 1;
-  transform: scale(1);
+  height: 85vh;
 }
 
 /* 네비게이션 버튼 */

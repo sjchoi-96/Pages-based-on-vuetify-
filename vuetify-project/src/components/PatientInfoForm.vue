@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-container class="center-container">
+    <v-container>
       <v-form ref="form" v-model="valid">
         <v-text-field
           v-model="patientName"
@@ -21,15 +21,37 @@
           variant="solo-filled"
           class="custom-design-textfield"
         />
-        <v-text-field
-          v-model="birthDate"
-          :rules="dateRules"
-          label="생년월일 (YYYY-MM-DD)"
-          required
-          outlined
-          variant="solo-filled"
-          class="custom-design-textfield"
-        />
+
+        <!-- 생년월일 텍스트 필드와 연결된 Date Picker -->
+        <v-menu
+          v-model="datePickerVisible"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
+          <template #activator="{ props }">
+            <v-text-field
+              v-model="birthDate"
+              :rules="dateRules"
+              label="생년월일 (YYYY-MM-DD)"
+              required
+              outlined
+              variant="solo-filled"
+              color="primary"
+              class="custom-design-textfield"
+              append-icon="mdi-calendar"
+              v-bind="props"
+            />
+          </template>
+          <v-date-picker
+            v-model="selectedDate"
+            :max="maxDate"
+            color="primary"
+            @update:model-value="updateBirthDate"
+          />
+        </v-menu>
+
         <!-- 메모 필드 추가 -->
         <v-textarea
           v-model="memo"
@@ -83,13 +105,16 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     console.log("PatientInfoForm 호출 완료");
-    // 반응형 변수 정의
+
     const valid = ref<boolean>(false);
     const patientName = ref<string>(props.patientNameProp);
     const patientId = ref<string>(props.patientIdProp);
     const birthDate = ref<string>(props.birthDateProp);
+    const selectedDate = ref<string | null>(null); // Date Picker 선택 날짜
     const memo = ref<string>(""); // 메모 필드 추가
     const showSnackbar = ref<boolean>(false); // 스낵바 표시 상태
+    const datePickerVisible = ref<boolean>(false); // Date Picker 표시 상태
+    const maxDate = new Date().toISOString().split("T")[0]; // 오늘 이후 날짜 선택 불가
 
     // 유효성 검사 규칙
     const nameRules = [(v: string) => !!v || "이름을 입력해주세요."];
@@ -100,6 +125,16 @@ export default defineComponent({
         /^\d{4}-\d{2}-\d{2}$/.test(v) || "YYYY-MM-DD 형식으로 입력해주세요.",
     ];
 
+    // 선택된 날짜를 YYYY-MM-DD 형식으로 업데이트
+    const updateBirthDate = (date: string | null) => {
+      if (date) {
+        const formattedDate = new Date(date).toISOString().split("T")[0];
+        birthDate.value = formattedDate; // 형식 변환된 날짜를 birthDate에 저장
+        datePickerVisible.value = false; // Date Picker 닫기
+        console.log("Updated birthDate:", birthDate.value);
+      }
+    };
+
     // 제출 함수 정의
     const submitPatientInfo = () => {
       const patientInfo = {
@@ -109,6 +144,7 @@ export default defineComponent({
         memo: memo.value, // 메모 필드 포함
       };
       emit("completed", patientInfo); // 부모 컴포넌트로 데이터 전송
+      console.log("patientInfo", patientInfo);
       showSnackbar.value = true; // 스낵바 표시
     };
 
@@ -117,24 +153,35 @@ export default defineComponent({
       patientName,
       patientId,
       birthDate,
+      selectedDate,
       memo,
       nameRules,
       idRules,
       dateRules,
+      updateBirthDate,
       submitPatientInfo,
       showSnackbar,
+      datePickerVisible,
+      maxDate,
     };
   },
 });
 </script>
+
 <style scoped>
-.center-container {
+.v-application__wrap {
+  overflow: hidden; /* 스크롤바 숨기기 */
+  height: 80vh; /* 전체 뷰포트 높이 설정 */
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  flex-direction: column;
 }
 
+.v-container {
+  overflow: hidden; /* 스크롤바 숨기기 */
+  height: 80vh; /* 전체 뷰포트 높이 설정 */
+  display: flex;
+  flex-direction: column;
+}
 .custom-design-textfield {
   margin-bottom: 20px; /* 상하 간격 조정 */
   width: 500px;
