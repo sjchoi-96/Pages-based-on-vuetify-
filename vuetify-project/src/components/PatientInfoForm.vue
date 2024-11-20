@@ -1,88 +1,93 @@
 <template>
-  <v-app>
-    <v-container>
-      <v-form ref="form" v-model="valid">
-        <v-text-field
-          v-model="patientName"
-          :rules="nameRules"
-          label="환자 이름"
-          required
-          outlined
-          variant="solo-filled"
-          color="primary"
-          class="custom-design-textfield"
-        />
-        <v-text-field
-          v-model="patientId"
-          :rules="idRules"
-          label="환자 ID"
-          required
-          outlined
-          variant="solo-filled"
-          class="custom-design-textfield"
-        />
+  <v-container>
+    <v-form ref="form" v-model="valid">
+      <v-text-field
+        v-model="patientName"
+        :rules="nameRules"
+        label="환자 이름"
+        required
+        outlined
+        variant="solo-filled"
+        color="primary"
+        class="custom-design-textfield"
+      />
+      <v-text-field
+        v-model="patientId"
+        :rules="idRules"
+        label="환자 ID"
+        required
+        outlined
+        variant="solo-filled"
+        class="custom-design-textfield"
+      />
 
-        <!-- 생년월일 텍스트 필드와 연결된 Date Picker -->
-        <v-menu
-          v-model="datePickerVisible"
-          :close-on-content-click="false"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template #activator="{ props }">
-            <v-text-field
-              v-model="birthDate"
-              :rules="dateRules"
-              label="생년월일 (YYYY-MM-DD)"
-              required
-              outlined
-              variant="solo-filled"
-              color="primary"
-              class="custom-design-textfield"
-              append-icon="mdi-calendar"
-              v-bind="props"
-            />
-          </template>
-          <v-date-picker
-            v-model="selectedDate"
-            :max="maxDate"
+      <!-- 생년월일 텍스트 필드와 연결된 Date Picker -->
+      <v-menu
+        v-model="datePickerVisible"
+        :close-on-content-click="false"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
+      >
+        <template #activator="{ props }">
+          <v-text-field
+            v-model="birthDate"
+            :rules="dateRules"
+            label="생년월일 (YYYY-MM-DD)"
+            required
+            outlined
+            variant="solo-filled"
             color="primary"
-            @update:model-value="updateBirthDate"
+            class="custom-design-textfield"
+            v-bind="props"
           />
-        </v-menu>
-
-        <!-- 메모 필드 추가 -->
-        <v-textarea
-          v-model="memo"
-          label="메모"
-          outlined
-          variant="solo-filled"
-          class="custom-design-textfield"
+        </template>
+        <v-date-picker
+          v-model="selectedDate"
+          :max="maxDate"
+          color="green lighten-1"
+          @update:model-value="updateBirthDate"
         />
-        <v-btn
-          :disabled="!valid"
-          color="primary"
-          @click="submitPatientInfo"
-          outlined
-        >
-          저장
-        </v-btn>
-      </v-form>
-    </v-container>
+      </v-menu>
 
-    <!-- 환자 정보 저장 완료 알림 -->
-    <v-snackbar
-      v-model="showSnackbar"
-      timeout="1500"
-      color="success"
-      centered
-      bottom
-      class="custom-snackbar"
-    >
-      <div class="snackbar-content">환자정보 저장 완료</div>
-    </v-snackbar>
-  </v-app>
+      <!-- 메모 필드 추가 -->
+      <v-textarea
+        v-model="memo"
+        label="메모"
+        outlined
+        variant="solo-filled"
+        row-height="30"
+        rows="10"
+        class="custom-design-textfield"
+      />
+
+      <v-tooltip text="환자정보를 저장합니다.">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            :disabled="!valid"
+            color="primary"
+            @click="submitPatientInfo"
+            outlined
+          >
+            저장
+          </v-btn>
+        </template>
+      </v-tooltip>
+    </v-form>
+  </v-container>
+
+  <!-- 환자 정보 저장 완료 알림 -->
+  <v-snackbar
+    v-model="showSnackbar"
+    timeout="1500"
+    color="success"
+    centered
+    bottom
+    class="custom-snackbar"
+  >
+    <div class="snackbar-content">환자정보 저장 완료</div>
+  </v-snackbar>
 </template>
 
 <script lang="ts">
@@ -169,17 +174,12 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.v-application__wrap {
-  overflow: hidden; /* 스크롤바 숨기기 */
-  height: 80vh; /* 전체 뷰포트 높이 설정 */
-  display: flex;
-  flex-direction: column;
-}
-
 .v-container {
-  overflow: hidden; /* 스크롤바 숨기기 */
-  height: 80vh; /* 전체 뷰포트 높이 설정 */
+  overflow: auto; /* 스크롤바 추가 */
+  height: 100%; /* 전체 뷰포트 높이 설정 */
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
 }
 .custom-design-textfield {

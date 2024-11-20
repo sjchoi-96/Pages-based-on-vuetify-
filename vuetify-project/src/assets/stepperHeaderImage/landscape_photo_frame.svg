@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" width="300" height="200">
+  <!-- 액자 외곽 -->
+  <rect x="10" y="10" width="280" height="180" fill="#8b4513" stroke="#5a3310" stroke-width="10" rx="10" />
+  
+  <!-- 사진 영역 -->
+  <rect x="30" y="30" width="240" height="140" fill="#ffffff" stroke="#b0bec5" stroke-width="2" rx="5" />
+
+  <!-- 사진 내용 -->
+  <!-- 하늘 -->
+  <rect x="30" y="30" width="240" height="70" fill="#87ceeb" />
+  <!-- 들판 -->
+  <rect x="30" y="100" width="240" height="70" fill="#7cfc00" />
+  <!-- 태양 -->
+  <circle cx="70" cy="50" r="20" fill="#ffd700" />
+  <!-- 구름 -->
+  <ellipse cx="150" cy="60" rx="30" ry="15" fill="#ffffff" />
+  <ellipse cx="170" cy="50" rx="30" ry="15" fill="#ffffff" />
+  <ellipse cx="130" cy="50" rx="30" ry="15" fill="#ffffff" />
+</svg>

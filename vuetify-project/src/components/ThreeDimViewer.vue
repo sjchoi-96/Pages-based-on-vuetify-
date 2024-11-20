@@ -3,7 +3,14 @@
     <div class="threeD-file-upload-container">
       <!-- 파일 선택 버튼과 파일 정보 컨테이너 -->
       <div class="controls-container">
-        <v-btn class="custom-btn" @click="triggerFileUpload"> 파일 선택 </v-btn>
+        <v-tooltip text=".stl, .obj 파일만 지원 ">
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props" class="custom-btn" @click="triggerFileUpload">
+              파일 선택
+            </v-btn>
+          </template>
+        </v-tooltip>
+
         <input
           type="file"
           ref="fileInput"
@@ -25,6 +32,7 @@ import { defineComponent, ref, onMounted, onBeforeUnmount } from "vue";
 import * as THREE from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 export default defineComponent({
   setup(props, { emit }) {
@@ -36,6 +44,7 @@ export default defineComponent({
     let scene: THREE.Scene;
     let camera: THREE.PerspectiveCamera;
     let renderer: THREE.WebGLRenderer;
+    let controls: OrbitControls;
 
     // 파일 업로드 트리거 함수
     const triggerFileUpload = () => {
@@ -76,6 +85,13 @@ export default defineComponent({
           viewer.value.innerHTML = "";
           viewer.value.appendChild(renderer.domElement);
 
+          // OrbitControls 초기화
+          controls = new OrbitControls(camera, renderer.domElement);
+          controls.enableDamping = true; // 감속 효과 활성화
+          controls.dampingFactor = 0.25;
+          controls.screenSpacePanning = true; // 드래그(패닝) 활성화
+          controls.maxPolarAngle = Math.PI / 2;
+
           let loader;
           if (file.name.toLowerCase().endsWith(".obj")) {
             // OBJ 파일 로드
@@ -104,19 +120,8 @@ export default defineComponent({
 
           camera.position.z = 10;
 
-          const animate = () => {
-            requestAnimationFrame(animate);
-            scene.traverse((object) => {
-              if (object instanceof THREE.Mesh) {
-                object.rotation.x += 0.01;
-                object.rotation.y += 0.01;
-                object.rotation.z += 0.01;
-              }
-            });
-            renderer.render(scene, camera);
-          };
-
-          animate();
+          // 모델 로드 후 애니메이션 시작
+          startAnimation();
         }
       };
 
@@ -126,6 +131,16 @@ export default defineComponent({
       } else if (file.name.toLowerCase().endsWith(".stl")) {
         reader.readAsArrayBuffer(file);
       }
+    };
+
+    const startAnimation = () => {
+      const animate = () => {
+        requestAnimationFrame(animate);
+        controls.update(); // OrbitControls 업데이트
+        renderer.render(scene, camera);
+      };
+
+      animate();
     };
 
     const resizeViewer = () => {

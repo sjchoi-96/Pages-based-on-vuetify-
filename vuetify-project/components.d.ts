@@ -15,6 +15,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     StlViewerProject: typeof import('./src/components/stlViewerProject.vue')['default']
+    STLViewerProject: typeof import('./src/components/STLViewerProject.vue')['default']
     ThreeDimViewer: typeof import('./src/components/ThreeDimViewer.vue')['default']
   }
 }

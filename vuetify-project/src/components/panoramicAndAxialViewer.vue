@@ -69,8 +69,8 @@ export default defineComponent({
 /* 컨테이너를 Grid로 정의 */
 .viewer-container {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 2열 구성 */
-  grid-template-rows: 1fr 1fr; /* 2행 구성, 행 비율 조정 */
+  grid-template-columns: 1fr 1fr; /*2열을 1대1의 비율로 나눔*/
+  grid-template-rows: 1fr 1fr; /* 2행을 1대1의 비율로 나눔 */
   gap: 20px; /* 각 요소 간 간격 */
   width: 100%; /* 전체 너비 */
   height: 100vh; /* 전체 화면 높이에서 버튼 영역 제외 */
@@ -84,29 +84,29 @@ export default defineComponent({
   grid-column: 1; /* 1열 */
   width: 100%; /* 가로 길이 조정 */
   height: 75%; /* 높이를 조정하여 버튼 영역 확보 */
-  border: 2px solid #00ff77;
+  border: 2px solid #ddd;
   border-radius: 8px; /* 둥근 모서리 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
 }
 
 /* Panoramic: 1행 2열 */
 .upload-panoramic {
-  grid-column: 2; /* 2열 */
   grid-row: 1; /* 1행 */
+  grid-column: 2; /* 2열 */
   width: 100%; /* 가로 길이 자동 조정 */
   height: 50%; /* 높이를 조정하여 버튼 영역 확보 */
-  border: 2px solid #0077ff;
+  border: 2px solid #ddd;
   border-radius: 8px; /* 둥근 모서리 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
 }
 
 /* Axial: 2행 2열 */
 .upload-axial {
-  grid-column: 2; /* 2열 */
   grid-row: 2; /* 2행 */
+  grid-column: 2; /* 2열 */
   width: 100%; /* 가로 길이 자동 조정 */
   height: 50%; /* 높이를 조정하여 버튼 영역 확보 */
-  border: 2px solid #ff7700;
+  border: 2px solid #ddd;
   border-radius: 8px; /* 둥근 모서리 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
 }

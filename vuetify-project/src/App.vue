@@ -17,6 +17,8 @@
             }"
             @click="goToStep(index + 1)"
           >
+            <!-- 이미지 추가 -->
+            <img :src="getStepImage(index + 1)" class="step-image" />
             {{ step }}
           </v-stepper-step>
         </v-stepper-header>
@@ -75,6 +77,10 @@ import PatientInfoForm from "./components/PatientInfoForm.vue";
 import PanoramicAndAxialViewer from "./components/PanoramicAndAxialViewer.vue";
 import ThreeDimViewer from "./components/ThreeDimViewer.vue";
 
+import step1Image from "@/assets/stepperHeaderImage/document_pencil.svg";
+import step2Image from "@/assets/stepperHeaderImage/landscape_photo_frame.svg";
+import step3Image from "@/assets/stepperHeaderImage/simple_3d_cube.svg";
+
 export default {
   name: "DynamicGridStepper",
   setup() {
@@ -112,6 +118,19 @@ export default {
       }
     };
 
+    const getStepImage = (step: number) => {
+      switch (step) {
+        case 1:
+          return step1Image;
+        case 2:
+          return step2Image;
+        case 3:
+          return step3Image;
+        default:
+          return "";
+      }
+    };
+
     return {
       steps,
       currentStep,
@@ -120,18 +139,13 @@ export default {
       finishStepper,
       goToStep,
       getStepComponent,
+      getStepImage,
     };
   },
 };
 </script>
 
 <style scoped>
-.v-application__wrap {
-  overflow: hidden; /* 스크롤바 숨기기 */
-  height: 300px; /* 전체 뷰포트 높이 설정 */
-  display: flex;
-  flex-direction: column;
-}
 /* Step Header: 크기 고정 및 정렬 */
 .stepper-header {
   position: sticky;
@@ -154,6 +168,7 @@ export default {
   line-height: 50px; /* 텍스트를 세로 중앙 정렬 */
   text-align: center; /* 텍스트를 항상 중앙에 정렬 */
   transition: color 0.3s ease, transform 0.3s ease; /* 부드러운 색상 및 효과 전환 */
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 }
 
 /* 활성화된 스텝 */
@@ -185,9 +200,9 @@ export default {
 }
 
 .grid-item {
-  border: 1px solid #ddd; /* 컴포넌트 테두리 */
+  border: 2px solid #ddd; /* 컴포넌트 테두리 */
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 2px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   opacity: 0;
   transform: scale(0.95);
@@ -206,5 +221,12 @@ export default {
   justify-content: flex-end;
   gap: 16px;
   margin-top: 16px;
+}
+
+.step-image {
+  width: 50px; /* 이미지 너비 */
+  height: 50px; /* 이미지 높이 */
+  margin-right: 8px; /* 텍스트와의 간격 */
+  vertical-align: middle; /* 텍스트와 수직 정렬 */
 }
 </style>
