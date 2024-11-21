@@ -3,7 +3,7 @@
     <div class="threeD-file-upload-container">
       <!-- 파일 선택 버튼과 파일 정보 컨테이너 -->
       <div class="controls-container">
-        <v-tooltip text=".stl, .obj 파일만 지원 ">
+        <v-tooltip text="(지원 형식: OBJ, STL) ">
           <template v-slot:activator="{ props }">
             <v-btn v-bind="props" class="custom-btn" @click="triggerFileUpload">
               파일 선택
@@ -91,6 +91,9 @@ export default defineComponent({
           controls.dampingFactor = 0.25;
           controls.screenSpacePanning = true; // 드래그(패닝) 활성화
           controls.maxPolarAngle = Math.PI / 2;
+          // 스크롤(확대/축소) 거리 제한 설정
+          controls.minDistance = 5; // 최소 거리
+          controls.maxDistance = 100; // 최대 거리
 
           let loader;
           if (file.name.toLowerCase().endsWith(".obj")) {
@@ -156,7 +159,7 @@ export default defineComponent({
     onMounted(() => {
       if (viewer.value) {
         viewer.value.style.width = "100%";
-        viewer.value.style.height = "800px";
+        viewer.value.style.height = "60vh";
         window.addEventListener("resize", resizeViewer);
         resizeViewer();
       }
@@ -180,7 +183,7 @@ export default defineComponent({
 <style scoped>
 .viewer-container {
   width: 100%;
-  height: 800px;
+  height: 100%;
   border: 1px solid #ccc;
   background-color: rgba(0, 0, 0, 1);
   position: relative; /* 내부 요소의 절대 배치를 위한 기준 */
@@ -189,7 +192,10 @@ export default defineComponent({
 /* 파일 선택 버튼 및 파일 정보 컨테이너 */
 .controls-container {
   position: absolute; /* 부모의 상대적 위치에 따라 배치 */
-  bottom: 150px; /* viewer-container의 하단에서 16px 띄움 */
+  bottom: min(
+    calc(5% + 20px),
+    50px
+  ); /* 화면 높이에 따라 동적으로 조정, 최소 50px 유지 */
   display: flex; /* 버튼과 파일 정보를 가로로 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
   gap: 10px; /* 버튼과 파일 정보 간격 */
@@ -200,7 +206,7 @@ export default defineComponent({
   display: flex; /* 내부 콘텐츠를 정렬하기 위해 flexbox 사용 */
   justify-content: center; /* 수평 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  background-color: #1968cf; /* 배경색 */
+  background-color: #1976d2; /* 배경색 */
   color: white; /* 텍스트 색상 */
   padding: 12px 30px; /* 버튼 내부 여백 */
   font-size: 18px; /* 텍스트 크기 */

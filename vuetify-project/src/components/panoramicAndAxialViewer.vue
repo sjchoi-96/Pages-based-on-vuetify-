@@ -53,7 +53,7 @@ export default defineComponent({
 
         if (allLoaded) {
           console.log("모든 이미지 로드 완료. 부모로 이벤트 전송");
-          emit("completed", { file, types: Object.keys(loadedImages.value) }); // 부모 컴포넌트로 데이터 전송
+          emit("completed", { file, types: Object.keys(loadedImages.value) }); //  completed 이벤트 발생하면서 부모 컴포넌트로 데이터 전송
         }
       };
     };
@@ -73,7 +73,7 @@ export default defineComponent({
   grid-template-rows: 1fr 1fr; /* 2행을 1대1의 비율로 나눔 */
   gap: 20px; /* 각 요소 간 간격 */
   width: 100%; /* 전체 너비 */
-  height: 100vh; /* 전체 화면 높이에서 버튼 영역 제외 */
+  height: 100%;
   padding: 20px;
   box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
@@ -83,7 +83,7 @@ export default defineComponent({
   grid-row: 1 / 3; /* 2행까지 차지 */
   grid-column: 1; /* 1열 */
   width: 100%; /* 가로 길이 조정 */
-  height: 75%; /* 높이를 조정하여 버튼 영역 확보 */
+  height: 50%; /* 높이를 조정하여 버튼 영역 확보 */
   border: 2px solid #ddd;
   border-radius: 8px; /* 둥근 모서리 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */

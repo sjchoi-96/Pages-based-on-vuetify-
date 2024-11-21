@@ -2,7 +2,7 @@
   <v-app>
     <v-container>
       <!-- Stepper Header -->
-      <v-stepper v-model="currentStep" flat>
+      <v-stepper v-model="currentStep">
         <v-stepper-header class="stepper-header">
           <v-stepper-step
             v-for="(step, index) in steps"
@@ -19,22 +19,22 @@
           >
             <!-- 이미지 추가 -->
             <img :src="getStepImage(index + 1)" class="step-image" />
-            {{ step }}
+            <span>{{ step }}</span>
+            <!-- 텍스트를 span 태그로 감쌈 -->
           </v-stepper-step>
         </v-stepper-header>
 
         <!-- Grid Layout for Components -->
         <div class="grid-container">
-          <div
-            v-for="(step, index) in steps"
-            :key="index"
-            class="grid-item"
-            :class="{ visible: currentStep >= index + 1 }"
-          >
+          <template v-for="(step, index) in steps" :key="index">
             <keep-alive>
-              <component :is="getStepComponent(index + 1)" />
+              <component
+                v-if="currentStep >= index + 1"
+                :is="getStepComponent(index + 1)"
+                class="grid-item"
+              />
             </keep-alive>
-          </div>
+          </template>
         </div>
       </v-stepper>
 
@@ -96,7 +96,7 @@ export default {
     };
 
     const finishStepper = () => {
-      alert("All steps completed!");
+      alert("모든 단계가 완료되었습니다.");
     };
 
     const goToStep = (step: number) => {
@@ -167,13 +167,17 @@ export default {
   /*글씨 크기가 변하더라도 레이아웃이 바뀌지 않도록 보장*/
   line-height: 50px; /* 텍스트를 세로 중앙 정렬 */
   text-align: center; /* 텍스트를 항상 중앙에 정렬 */
-  transition: color 0.3s ease, transform 0.3s ease; /* 부드러운 색상 및 효과 전환 */
+
   white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
+
+.step-header:hover .step-image {
+  transform: scale(1.3);
 }
 
 /* 활성화된 스텝 */
 .active-step {
-  color: #1976d2; /* 활성화된 텍스트 색상 */
+  color: black; /* 활성화된 텍스트 색상 */
   transform: scale(1.1); /* 글씨 크기를 확대하는 대신 transform 사용 */
 }
 
@@ -194,25 +198,30 @@ export default {
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3열 레이아웃 */
-  gap: 16px; /* 각 컴포넌트 간 간격 */
+  grid-template-columns: repeat(3, 1fr); /* 3열 레이아웃 유지 */
+  gap: 16px;
   margin-top: 16px;
 }
 
 .grid-item {
-  border: 2px solid #ddd; /* 컴포넌트 테두리 */
+  border: 2px solid #ddd;
   padding: 16px;
   border-radius: 2px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  transform: scale(0.95);
-  transition: opacity 0.3s ease, transform 0.3s ease;
   height: 85vh;
+  opacity: 1; /* opacity를 1로 설정 */
+  animation: fadeIn 0.3s ease-in-out; /* 페이드인 애니메이션 추가 */
 }
 
-.grid-item.visible {
-  opacity: 1;
-  height: 85vh;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* 네비게이션 버튼 */

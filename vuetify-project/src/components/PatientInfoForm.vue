@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-form ref="form" v-model="valid">
+    <v-form ref="form" v-model="valid" class="responsive-form">
       <v-text-field
         v-model="patientName"
         :rules="nameRules"
@@ -149,7 +149,7 @@ export default defineComponent({
         memo: memo.value, // 메모 필드 포함
       };
       emit("completed", patientInfo); // 부모 컴포넌트로 데이터 전송
-      console.log("patientInfo", patientInfo);
+      console.log("Emit patient info:", patientInfo);
       showSnackbar.value = true; // 스낵바 표시
     };
 
@@ -176,15 +176,21 @@ export default defineComponent({
 <style scoped>
 .v-container {
   overflow: auto; /* 스크롤바 추가 */
-  height: 100%; /* 전체 뷰포트 높이 설정 */
+  height: 100%; /* 전체 화면 높이 설정 */
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
+
+.responsive-form {
+  width: 100%; /* 부모 컨테이너에 맞춰 너비 조정 */
+  max-width: 500px; /* 최대 너비 설정 */
+}
+
 .custom-design-textfield {
   margin-bottom: 20px; /* 상하 간격 조정 */
-  width: 500px;
+  width: 100%; /* 텍스트 필드도 부모의 너비에 맞춰 조정 */
 }
 
 .custom-snackbar .snackbar-content {
