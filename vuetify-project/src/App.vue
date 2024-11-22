@@ -26,7 +26,7 @@
 
         <!-- Grid Layout for Components -->
         <div class="grid-container">
-          <template v-for="(step, index) in steps" :key="index">
+          <div v-for="(step, index) in steps" :key="index">
             <keep-alive>
               <component
                 v-if="currentStep >= index + 1"
@@ -34,7 +34,7 @@
                 class="grid-item"
               />
             </keep-alive>
-          </template>
+          </div>
         </div>
       </v-stepper>
 
@@ -145,7 +145,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 /* Step Header: 크기 고정 및 정렬 */
 .stepper-header {
   position: sticky;
@@ -208,20 +208,9 @@ export default {
   padding: 16px;
   border-radius: 2px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  height: 85vh;
+  height: 80vh;
   opacity: 1; /* opacity를 1로 설정 */
   animation: fadeIn 0.3s ease-in-out; /* 페이드인 애니메이션 추가 */
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 /* 네비게이션 버튼 */

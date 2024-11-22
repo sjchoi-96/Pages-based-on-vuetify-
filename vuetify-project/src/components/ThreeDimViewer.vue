@@ -181,21 +181,29 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.v-container {
+  overflow: auto; /* 스크롤바 추가 */
+  height: 80vh; /* 전체 화면 높이 설정 */
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative; /* 내부 요소의 절대 배치를 위한 기준 */
+}
 .viewer-container {
   width: 100%;
   height: 100%;
   border: 1px solid #ccc;
   background-color: rgba(0, 0, 0, 1);
-  position: relative; /* 내부 요소의 절대 배치를 위한 기준 */
 }
 
 /* 파일 선택 버튼 및 파일 정보 컨테이너 */
 .controls-container {
   position: absolute; /* 부모의 상대적 위치에 따라 배치 */
-  bottom: min(
-    calc(5% + 20px),
-    50px
-  ); /* 화면 높이에 따라 동적으로 조정, 최소 50px 유지 */
+  bottom: 50px; /* 화면 높이에 따라 동적으로 조정, 최소 50px 유지 */
+  padding: 20px;
+  left: 0px;
   display: flex; /* 버튼과 파일 정보를 가로로 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
   gap: 10px; /* 버튼과 파일 정보 간격 */

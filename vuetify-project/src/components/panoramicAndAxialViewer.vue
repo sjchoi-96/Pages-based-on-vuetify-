@@ -67,6 +67,15 @@ export default defineComponent({
 
 <style scoped>
 /* 컨테이너를 Grid로 정의 */
+
+.v-container {
+  overflow: auto; /* 스크롤바 추가 */
+  height: 80vh; /* 전체 화면 높이 설정 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 .viewer-container {
   display: grid;
   grid-template-columns: 1fr 1fr; /*2열을 1대1의 비율로 나눔*/

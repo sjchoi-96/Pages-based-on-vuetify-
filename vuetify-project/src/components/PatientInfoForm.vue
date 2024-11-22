@@ -175,8 +175,9 @@ export default defineComponent({
 
 <style scoped>
 .v-container {
+  border: 2px solid #ddd;
   overflow: auto; /* 스크롤바 추가 */
-  height: 100%; /* 전체 화면 높이 설정 */
+  height: 80vh; /* 전체 화면 높이 설정 */
   display: flex;
   justify-content: center;
   align-items: center;
