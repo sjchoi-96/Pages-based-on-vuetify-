@@ -27,13 +27,15 @@
         <!-- Grid Layout for Components -->
         <div class="grid-container">
           <div v-for="(step, index) in steps" :key="index">
-            <keep-alive>
-              <component
-                v-if="currentStep >= index + 1"
-                :is="getStepComponent(index + 1)"
-                class="grid-item"
-              />
-            </keep-alive>
+            <transition name="slide-fade" mode="out-in">
+              <keep-alive>
+                <component
+                  v-if="currentStep >= index + 1"
+                  :is="getStepComponent(index + 1)"
+                  class="grid-item"
+                />
+              </keep-alive>
+            </transition>
           </div>
         </div>
       </v-stepper>
@@ -210,7 +212,6 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   height: 80vh;
   opacity: 1; /* opacity를 1로 설정 */
-  animation: fadeIn 0.3s ease-in-out; /* 페이드인 애니메이션 추가 */
 }
 
 /* 네비게이션 버튼 */
@@ -226,5 +227,24 @@ export default {
   height: 50px; /* 이미지 높이 */
   margin-right: 8px; /* 텍스트와의 간격 */
   vertical-align: middle; /* 텍스트와 수직 정렬 */
+}
+
+/* 슬라이드 페이드 트랜지션 */
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateX(-20px);
+  opacity: 0;
 }
 </style>
