@@ -7,31 +7,28 @@
           <v-stepper-step
             v-for="(step, index) in steps"
             :key="index"
-            :step="index + 1"
-            :complete="currentStep > index + 1"
-            :color="currentStep === index + 1 ? 'primary' : ''"
+            :complete="currentStep > index"
             class="step-header"
             :class="{
-              'active-step': currentStep === index + 1,
+              'active-step': currentStep === index,
               'clickable-step': true,
             }"
-            @click="goToStep(index + 1)"
+            @click="goToStep(index)"
           >
             <!-- 이미지 추가 -->
-            <img :src="getStepImage(index + 1)" class="step-image" />
-            <span>{{ step }}</span>
-            <!-- 텍스트를 span 태그로 감쌈 -->
+            <img :src="getStepImage(index)" class="step-image" />
+            {{ step }}
           </v-stepper-step>
         </v-stepper-header>
 
         <!-- Grid Layout for Components -->
         <div class="grid-container">
-          <div v-for="(step, index) in steps" :key="index">
-            <transition name="slide-fade" mode="out-in">
+          <div v-for="(_, index) in steps" :key="index">
+            <transition name="slide-fade">
               <keep-alive>
                 <component
-                  v-if="currentStep >= index + 1"
-                  :is="getStepComponent(index + 1)"
+                  v-if="currentStep >= index"
+                  :is="getStepComponent(index)"
                   class="grid-item"
                 />
               </keep-alive>
@@ -46,7 +43,7 @@
           outlined
           color="secondary"
           @click="prevStep"
-          v-if="currentStep > 1"
+          v-if="currentStep > 0"
           class="navigation-btn"
         >
           Previous
@@ -55,15 +52,15 @@
           outlined
           color="primary"
           @click="nextStep"
-          v-if="currentStep < steps.length"
+          v-if="currentStep < steps.length - 1"
           class="navigation-btn"
         >
           Next
         </v-btn>
         <v-btn
           color="success"
-          @click="finishStepper"
-          v-if="currentStep === steps.length"
+          @click="finishStep"
+          v-if="currentStep === steps.length - 1"
           class="navigation-btn"
         >
           Finish
@@ -87,33 +84,33 @@ export default {
   name: "DynamicGridStepper",
   setup() {
     const steps = ["Patient Info", "Image Viewer", "3D Viewer"];
-    const currentStep = ref(1);
+    const currentStep = ref(0);
 
     const nextStep = () => {
       if (currentStep.value < steps.length) currentStep.value++;
     };
 
     const prevStep = () => {
-      if (currentStep.value > 1) currentStep.value--;
+      if (currentStep.value > 0) currentStep.value--;
     };
 
-    const finishStepper = () => {
+    const finishStep = () => {
       alert("모든 단계가 완료되었습니다.");
     };
 
     const goToStep = (step: number) => {
-      if (step >= 1 && step <= steps.length) {
+      if (step >= 0 && step <= steps.length) {
         currentStep.value = step;
       }
     };
 
     const getStepComponent = (step: number) => {
       switch (step) {
-        case 1:
+        case 0:
           return PatientInfoForm;
-        case 2:
+        case 1:
           return PanoramicAndAxialViewer;
-        case 3:
+        case 2:
           return ThreeDimViewer;
         default:
           return null;
@@ -122,11 +119,11 @@ export default {
 
     const getStepImage = (step: number) => {
       switch (step) {
-        case 1:
+        case 0:
           return step1Image;
-        case 2:
+        case 1:
           return step2Image;
-        case 3:
+        case 2:
           return step3Image;
         default:
           return "";
@@ -138,7 +135,7 @@ export default {
       currentStep,
       nextStep,
       prevStep,
-      finishStepper,
+      finishStep,
       goToStep,
       getStepComponent,
       getStepImage,
